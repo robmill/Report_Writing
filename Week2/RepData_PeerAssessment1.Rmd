@@ -49,13 +49,51 @@ plot(y=devicedata$steps,x=devicedata$date,type="h",
 
 ### Mean and Median Steps Per Day
 ```{r mean/median steps}
-uniqueDates<-unique(devicedata$date)
 
 
+meandevicedata<-as.data.frame(unique(devicedata$date))
 
+for(i in 1:nrow(meandevicedata)){
+    temp<-mean(devicedata[devicedata$date==meandevicedata[i,1],
+                          "steps"])
+    meandevicedata[i,2]<-temp
+}
+
+names(meandevicedata)<-c("date","mean_steps")
+
+mediandevicedata<-as.data.frame(unique(devicedata$date))
+
+for(i in 1:nrow(mediandevicedata)){
+    temp<-median(devicedata[devicedata$date==mediandevicedata[i,1],
+                            "steps"])
+    mediandevicedata[i,2]<-temp
+}
+
+names(mediandevicedata)<-c("date","median_steps")
+
+
+plot(y=meandevicedata$mean_steps,x=meandevicedata$date,
+     type="h",
+     xlab="Date",ylab="Mean Number of Steps",
+     main="Mean Steps per Day Oct. 1 to Dec. 1 2012")
+
+plot(y=mediandevicedata$median_steps,x=mediandevicedata$date,
+     type="h",
+     xlab="Date",ylab="Median Number of Steps",
+     main="Median Steps per Day Oct. 1 to Dec. 1 2012")
+
+```
+
+### Average Steps Time Series Plot
+```{r time series plot}
+plot(meandevicedata,type="l",ylab="Mean Steps",
+     xlab="Date",
+     main="Average Number of Steps Per Day")
 ```
 
 ### Data Imputation
 ```{r data imputation}
 
 ```
+
+### Nacho Cheese Doritos
