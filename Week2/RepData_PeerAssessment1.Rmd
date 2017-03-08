@@ -1,0 +1,61 @@
+---
+title: "RepData_PeerAssessment1"
+output: html_document
+---
+
+# Reproducible Research
+## Peer-graded Assignment: Course Project 1
+### Robert Miller
+### March 7, 2017
+
+### Loading and preprocessing data
+```{r code for reading in dataset}
+library(ggplot2)
+
+rawdevicedata<-read.csv("activity.csv")
+
+devicedata<-rawdevicedata
+
+# initial parse/validation of data
+head(devicedata)
+dim(devicedata)
+
+n1<-nrow(devicedata)
+
+# remove NA values
+devicedata<-devicedata[complete.cases(devicedata),]
+
+n2<-nrow(devicedata)
+
+# post processing parse/validation of data
+head(devicedata)
+dim(devicedata)
+
+print(paste0("Rows removed from dataset: ",n1-n2,"."))
+
+# set type for date to Date
+devicedata$date<-as.Date(devicedata$date)
+
+```
+### Histogram of processed data
+```{r histogram of total number of steps}
+
+plot(y=devicedata$steps,x=devicedata$date,type="h",
+     xlab="Date",ylab="Number of Steps",
+     main="Number of Steps per Day Oct. 1 to Dec. 1 2012")
+
+  
+```
+
+### Mean and Median Steps Per Day
+```{r mean/median steps}
+uniqueDates<-unique(devicedata$date)
+
+
+
+```
+
+### Data Imputation
+```{r data imputation}
+
+```
