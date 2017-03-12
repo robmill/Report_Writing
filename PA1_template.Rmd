@@ -1,15 +1,15 @@
 ---
-title: "RepData_PeerAssessment1"
+title: "PA1_template"
 output: html_document
 ---
 
 # Reproducible Research
 ## Peer-graded Assignment: Course Project 1
 ### Robert Miller
-### March 7, 2017
+### March 12, 2017
 
 
-1. Code for reading int he dataset and/or processing the data
+1. Code for reading dataset and/or processing the data
 ```{r code for reading in dataset}
 library(ggplot2)
 library(plyr)
@@ -29,14 +29,14 @@ devicedata<-devicedata[complete.cases(devicedata),]
 
 n2<-nrow(devicedata)
 
-# post processing parse/validation of data
-head(devicedata)
-dim(devicedata)
-
 print(paste0("Rows removed from dataset: ",n1-n2,"."))
 
 # set type for date to Date
 devicedata$date<-as.Date(devicedata$date)
+
+devicedata<-aggregate(steps~date,
+                      devicedata,
+                      sum)
 
 ```
 
@@ -76,7 +76,7 @@ meandevicedata$date<-as.Date(meandevicedata$date)
 
 plot(meandevicedata,type="l",ylab="Mean Steps",
      xlab="Date",
-     main="Average Number of Steps Per Day")
+     main="Mean Steps Per Day")
 ```
 
 5. The 5-minute interval that, on average contains the maximum number of steps
@@ -92,22 +92,87 @@ print(paste0("Mean 5-minute interval that contains max steps: ", avgInterval, ".
 ### Data Imputation
 ```{r data imputation}
 
+# Assign raw dataset to temp dataset
 tempdevicedata<-rawdevicedata
-tempdevicedata[is.na(rawdevicedata$steps),"steps"]<-meanDD/288
 
-rawdevicedata<-complete.cases(rawdevicedata)
+# Divide mean steps per day by number of intervals
+# assign to overwrite NA values
+tempdevicedata<-tempdevicedata[is.na(rawdevicedata$steps),]
 
-tempdevicedata<-rbind(tempdevicedata,rawdevicedata)
+tempdevicedata$steps<-meanDD/288
 
+
+# carve out non-NA cases
+completecases<-rawdevicedata[complete.cases(rawdevicedata), ]
+
+
+
+# recombine imputed rows and complete case rows
+tempdevicedata<-rbind(completecases,tempdevicedata)
+
+# recompute mean, including imputed days
 meandevicedata<-aggregate(steps~date,FUN=mean,data=tempdevicedata)
 
+# converte date feature to enable clean plot
 meandevicedata$date<-as.Date(meandevicedata$date)
 
 
 plot(meandevicedata,type="l",ylab="Mean Steps",
      xlab="Date",
-     main="Average Number of Steps Per Day")
-```
+     main="Mean Steps Per Day with Imputed Values")
 ```
 
-### Nacho Cheese Doritos
+```{r new histogram with imputed data}
+
+histdata<-aggregate(steps~date,
+                      tempdevicedata,
+                      sum)
+
+histdata$date<-as.Date(histdata$date)
+
+plot(y=histdata$steps,x=histdata$date,type="h",
+     xlab="Date",ylab="Number of Steps",
+     main="Total Number of Steps per Day Oct. 1 to Dec. 1 2012 - Imputed")
+
+```
+
+```{r}
+
+wkndList<-c('Saturday','Sunday')
+
+
+tempdevicedata$date<-as.Date(tempdevicedata$date)
+
+tempdevicedata$wk<-factor((weekdays(tempdevicedata$date) %in% wkndList), levels = c(TRUE, FALSE),
+                    labels=c('weekend','weekday'))
+
+
+wknddevicedata<-tempdevicedata[tempdevicedata$wk=="weekend",]
+
+wkdydevicedata<-tempdevicedata[tempdevicedata$wk!="weekend",]
+
+
+wknddevicedata<-aggregate(steps~date,
+                          wknddevicedata,
+                          mean)
+
+
+par(mfrow=c(1,2))
+plot(wknddevicedata,type="l",ylab="Mean Steps",
+     xlab="Date",
+     ylim=c(0,80),
+     main="Weekend - Mean Steps Per Day")
+
+wkdydevicedata<-aggregate(steps~date,
+                          wkdydevicedata,
+                          mean)
+
+
+plot(wkdydevicedata,type="l",ylab="Mean Steps",
+     xlab="Date",
+     ylim=c(0,80),
+     main="Weekday - Mean Steps Per Day")
+
+
+
+```
