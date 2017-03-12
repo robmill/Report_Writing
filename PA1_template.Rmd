@@ -92,6 +92,22 @@ print(paste0("Mean 5-minute interval that contains max steps: ", avgInterval, ".
 ### Data Imputation
 ```{r data imputation}
 
+tempdevicedata<-rawdevicedata
+tempdevicedata[is.na(rawdevicedata$steps),"steps"]<-meanDD/288
+
+rawdevicedata<-complete.cases(rawdevicedata)
+
+tempdevicedata<-rbind(tempdevicedata,rawdevicedata)
+
+meandevicedata<-aggregate(steps~date,FUN=mean,data=tempdevicedata)
+
+meandevicedata$date<-as.Date(meandevicedata$date)
+
+
+plot(meandevicedata,type="l",ylab="Mean Steps",
+     xlab="Date",
+     main="Average Number of Steps Per Day")
+```
 ```
 
 ### Nacho Cheese Doritos
