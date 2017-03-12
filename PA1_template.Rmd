@@ -8,10 +8,11 @@ output: html_document
 ### Robert Miller
 ### March 7, 2017
 
-### Loading and preprocessing data
+
 1. Code for reading int he dataset and/or processing the data
 ```{r code for reading in dataset}
 library(ggplot2)
+library(plyr)
 
 rawdevicedata<-read.csv("activity.csv")
 
@@ -39,7 +40,6 @@ devicedata$date<-as.Date(devicedata$date)
 
 ```
 
-### Histogram of processed data
 2. Histogram of the total number of steps taken each day
 ```{r histogram of total number of steps}
 
@@ -50,7 +50,8 @@ plot(y=devicedata$steps,x=devicedata$date,type="h",
   
 ```
 
-### Mean and Median Steps Per Day
+3. Mean and Median Steps Per Day
+
 ```{r mean/median steps}
 
 # Aggregate steps by day
@@ -67,12 +68,27 @@ print(paste0("Median number of steps across the 61 day period: ", medianDD, ".")
 ```
 
 ### Average Steps Time Series Plot
+4. Time series plot of the average number of steps taken
 ```{r time series plot}
-#plot(meandevicedata,type="l",ylab="Mean Steps",
-#     xlab="Date",
-#     main="Average Number of Steps Per Day")
+meandevicedata<-aggregate(steps~date,FUN=mean,data=rawdevicedata)
+
+meandevicedata$date<-as.Date(meandevicedata$date)
+
+plot(meandevicedata,type="l",ylab="Mean Steps",
+     xlab="Date",
+     main="Average Number of Steps Per Day")
 ```
 
+5. The 5-minute interval that, on average contains the maximum number of steps
+```{r}
+maxdates<-aggregate(steps~date,rawdevicedata,max)
+
+addInterval<-merge(maxdates,rawdevicedata)
+
+avgInterval<-as.integer(mean(addInterval$interval))
+print(paste0("Mean 5-minute interval that contains max steps: ", avgInterval, "."))
+
+```
 ### Data Imputation
 ```{r data imputation}
 
