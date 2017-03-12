@@ -9,7 +9,7 @@ output: html_document
 ### March 12, 2017
 
 
-1. Code for reading dataset and/or processing the data
+### Reading in dataset and processing
 ```{r code for reading in dataset}
 library(ggplot2)
 library(plyr)
@@ -40,7 +40,7 @@ devicedata<-aggregate(steps~date,
 
 ```
 
-2. Histogram of the total number of steps taken each day
+### Histogram of the total number of steps taken each day
 ```{r histogram of total number of steps}
 
 plot(y=devicedata$steps,x=devicedata$date,type="h",
@@ -50,7 +50,7 @@ plot(y=devicedata$steps,x=devicedata$date,type="h",
   
 ```
 
-3. Mean and Median Steps Per Day
+### Mean and Median Steps Per Day
 
 ```{r mean/median steps}
 
@@ -68,7 +68,7 @@ print(paste0("Median number of steps across the 61 day period: ", medianDD, ".")
 ```
 
 ### Average Steps Time Series Plot
-4. Time series plot of the average number of steps taken
+### Time series plot of the average number of steps taken
 ```{r time series plot}
 meandevicedata<-aggregate(steps~date,FUN=mean,data=rawdevicedata)
 
@@ -79,7 +79,7 @@ plot(meandevicedata,type="l",ylab="Mean Steps",
      main="Mean Steps Per Day")
 ```
 
-5. The 5-minute interval that, on average contains the maximum number of steps
+### The 5-minute interval that, on average contains the maximum number of steps
 ```{r}
 maxdates<-aggregate(steps~date,rawdevicedata,max)
 
@@ -122,6 +122,7 @@ plot(meandevicedata,type="l",ylab="Mean Steps",
      main="Mean Steps Per Day with Imputed Values")
 ```
 
+### Histogram with Imputed Data
 ```{r new histogram with imputed data}
 
 histdata<-aggregate(steps~date,
@@ -136,6 +137,7 @@ plot(y=histdata$steps,x=histdata$date,type="h",
 
 ```
 
+### Comparison of Mean Steps Per Day by Weekday and Weekend
 ```{r}
 
 wkndList<-c('Saturday','Sunday')
